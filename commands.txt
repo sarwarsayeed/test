@@ -1,0 +1,55 @@
+= Working with ATR through CLI (Dir test network)=
+
+
+*** Invoke transactions*****
+
+peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com \
+  --tls --cafile $ORDERER_CERTFILE \
+  -C trustee -n basic \
+  --peerAddresses localhost:7051 --tlsRootCertFiles $ORG1_PEER_CERTFILE \
+  --peerAddresses localhost:9051 --tlsRootCertFiles $ORG2_PEER_CERTFILE \
+  -c '{"function": "storeTransaction", "Args": [ "AM-123", "Storing AM transactions", "AM ID: ABC-123", "Dataset ID: CBA-123", "OrganisationID: ACD-123", "Agreement Status"]}'
+
+
+*****Query All Transactions*************
+
+peer chaincode query -C trustee -n basic -c '{"Args":["queryAllTransactions"]}' | jq
+
+
+
+
+*******Read particular transaction By transaction ID**************
+
+peer chaincode query -C trustee -n basic -c '{"Args":["ReadTransactionId", "20d865007281caad19be22f8b65ad82c53861da0188ede20514f19468c7db314"]}' | jq
+
+
+******Search all/only transactions based on their provider ID************
+
+peer chaincode query -C trustee -n basic -c '{"function":"queryTransactionsByProviderIDPrefix", "Args":["Tai"]}' | jq
+
+
+
+---------------------------------------------------------------------------------------------
+
+
+= Communication from DA-KR/ATR (Dir DA_KR) =
+
+
+**** Store Arrtibutes to ATR and Knowledge to KR ******
+node knowledge.js
+
+
+*****Query ALL Transactions******
+node ledger_query.js queryAllTransactions
+
+
+
+*******Read particular transaction By transaction ID**************
+
+node ledger_query.js ReadTransactionId db8c51c52b10143265dbaf31ff07712fd2ec4eb9bfe0ec93f96dfd93dfd8a148
+
+
+
+******Search all/only transactions based on their provider ID************
+node ledger_query.js queryTransactionsByProviderIDPrefix STM
+
